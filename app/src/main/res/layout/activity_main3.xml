@@ -8,6 +8,7 @@
     tools:context=".MainActivity3"
     android:background="@color/black"
     >
+
     <FrameLayout
         android:layout_width="250dp"
         android:layout_height="wrap_content"
@@ -33,19 +34,18 @@
             android:layout_height="250dp"
             android:background="@color/white"
             />
-
     </FrameLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/idTILData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/idFLQrCode"
+        android:layout_below="@id/idFLQrCode"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="15dp"
         android:hint="Add text to embed in QR Code"
-
         android:padding="5dp"
         android:textColorHint="@color/white"
         app:hintTextColor="@color/white"
@@ -61,19 +61,29 @@
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:textSize="14sp"/>
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/idBtnGenerateQR"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/idTILData"
+        android:layout_below="@id/idTILData"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
         android:text="Generate QR Code"
         android:textAllCaps="false"/>
+
+    <!-- Nút Lưu ảnh QR thêm mới -->
+    <Button
+        android:id="@+id/idBtnSaveQR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/idBtnGenerateQR"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Save QR Code"
+        android:textAllCaps="false" />
 
 </RelativeLayout>

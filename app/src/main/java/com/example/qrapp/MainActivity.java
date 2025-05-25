@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnCreateQr,btnReadQr;
+    Button btnCreateQr,btnReadQr , btnMete, btnScanQr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private void addControl() {
         btnReadQr=findViewById(R.id.btnReadQr);
         btnCreateQr=findViewById(R.id.btnCreateQr);
+        btnMete=findViewById(R.id.btnMete);
+        btnScanQr = findViewById(R.id.btnScanQr);
     }
 
     private void addEvent() {
@@ -44,6 +46,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(MainActivity.this, MainActivity3.class);
+                startActivity(intent);
+            }
+        });
+
+        btnMete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this, TestActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnScanQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ScanActivity.class);
                 startActivity(intent);
             }
         });

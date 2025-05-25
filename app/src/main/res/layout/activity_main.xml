@@ -28,5 +28,21 @@
             android:layout_marginTop="20dp"
             >
         </Button>
+
+        <Button
+            android:id="@+id/btnMete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Genarate QR"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            >
+        </Button>
+
+        <Button
+            android:id="@+id/btnScanQr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan QR" />
     </LinearLayout>
 </LinearLayout>
