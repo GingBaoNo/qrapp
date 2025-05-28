@@ -88,4 +88,24 @@ dependencies {
     // và không còn cần nó, hãy bỏ comment hoặc xóa dòng này.
     // Nếu bạn muốn giữ lại cho các tính năng đặc biệt của zxing, hãy giữ lại.
      implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
+
+    // Room components
+    // room-runtime: Chứa các lớp cốt lõi để làm việc với Room
+    implementation ("androidx.room:room-runtime:2.6.1")
+    // room-compiler: Được sử dụng bởi Annotation Processor để tạo ra code cần thiết cho database
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
+
+    // Optional: Nếu bạn dùng Kotlin Coroutines để xử lý async
+    // implementation "androidx.room:room-ktx:2.6.1"
+
+    // Optional: Để tích hợp LiveData và ViewModel (thường dùng với Room)
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+
+    // Optional: Để sử dụng RecyclerView để hiển thị dữ liệu
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
+
+    // Optional: Thư viện Glide để tải ảnh hiệu quả (nếu bạn có lưu đường dẫn ảnh)
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 }
