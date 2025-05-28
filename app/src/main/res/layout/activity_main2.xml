@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@drawable/gradient_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity2">
@@ -18,6 +19,19 @@
             android:text="Barcode &amp; QR Code Scanner"
             style="@style/TextAppearance.MaterialComponents.Headline6"
             android:textAlignment="center"/>
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/imageIv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_logo_2" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/black_gray"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Camera"
+                android:background="@drawable/rounded_button"
                 android:layout_marginEnd="5dp"
                 android:layout_weight="1"/>
             <!--            button:take image from camera to scan -->
@@ -35,46 +50,77 @@
                 android:id="@+id/galleryBtn"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
+                android:background="@drawable/rounded_button"
                 android:layout_height="wrap_content"
                 android:text="Gallery"/>
 
         </LinearLayout>
         <!--        imageview: show the image picked from camera/gallery-->
-        <ImageView
-            android:id="@+id/imageIv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:src="@drawable/ic_logo" />
 
         <!--        button: after picking image from camera/gallery-->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/scanBtn"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Scan"/>
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/scanBtn"
+                android:background="@drawable/rounded_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:text="Scan"/>
+            <!--            button:take image from camera to scan -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/historyBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_button"
+                android:layout_below="@id/scanBtn"
+                android:text="Xem Lịch Sử Quét" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/historyBtn"
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/scanBtn" android:layout_marginTop="16dp"
-            android:text="Xem Lịch Sử Quét"
-            app:cornerRadius="8dp" />
+            android:layout_height="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/black_gray"/>
         <!--        textview:label-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20sp"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:text="Result: "/>
+            android:text="Kết quả: "/>
 
         <!--        textview:show the scanned result from Barcode/-->
         <TextView
             android:id="@+id/resultTv"
+            android:textSize="18sp"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
+            android:text="Kết quả hiện ở đây"
             />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/openLinkBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Truy cập liên kết"
+                android:background="@drawable/rounded_button"
+                android:visibility="gone" />
+        </LinearLayout>
+
     </LinearLayout>
+
 </ScrollView>

@@ -2,6 +2,7 @@ package com.example.qrapp.Dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete; // Import Delete annotation
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -23,4 +24,8 @@ public interface QRCodeScanDao {
 
     @Query("DELETE FROM qr_code_scans")
     void deleteAllScans(); // Xóa tất cả các bản ghi (ví dụ cho mục đích debug)
+
+    // New method to delete a scan by ID
+    @Query("DELETE FROM qr_code_scans WHERE id = :scanId")
+    void deleteScanById(int scanId);
 }

@@ -95,9 +95,6 @@ dependencies {
     // room-compiler: Được sử dụng bởi Annotation Processor để tạo ra code cần thiết cho database
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
-    // Optional: Nếu bạn dùng Kotlin Coroutines để xử lý async
-    // implementation "androidx.room:room-ktx:2.6.1"
-
     // Optional: Để tích hợp LiveData và ViewModel (thường dùng với Room)
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")

@@ -25,6 +25,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.qrapp.Dao.QRCodeScanDao;
 import com.example.qrapp.Database.AppDatabase;
@@ -46,9 +49,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity2 extends AppCompatActivity {
-    private MaterialButton cameraBtn, galleryBtn, scanBtn, historyBtn; // Thêm historyBtn
+    private MaterialButton cameraBtn, galleryBtn, scanBtn, historyBtn, openLinkBtn; // Thêm openLinkBtn
     private ImageView imageIv;
     private TextView resultTv;
     private Uri imageUri = null;
@@ -72,12 +77,19 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left+10, systemBars.top+10, systemBars.right+10, systemBars.bottom+10);
+            return insets;
+        });
+
         cameraBtn = findViewById(R.id.cameraBtn);
         galleryBtn = findViewById(R.id.galleryBtn);
         scanBtn = findViewById(R.id.scanBtn);
         imageIv = findViewById(R.id.imageIv);
         resultTv = findViewById(R.id.resultTv);
-        historyBtn = findViewById(R.id.historyBtn); // Khởi tạo historyBtn
+        historyBtn = findViewById(R.id.historyBtn);
+        openLinkBtn = findViewById(R.id.openLinkBtn); // Khởi tạo openLinkBtn
 
         storagePermissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
         barcodeScanner = BarcodeScanning.getClient(new BarcodeScannerOptions.Builder()
@@ -111,10 +123,23 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
-        historyBtn.setOnClickListener(v -> { // Listener cho nút lịch sử
+        historyBtn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity2.this, HistoryActivity.class);
             startActivity(intent);
         });
+
+        openLinkBtn.setOnClickListener(v -> {
+            if (scannedContent != null && isValidUrl(scannedContent)) {
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(scannedContent));
+                    startActivity(browserIntent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Không thể mở liên kết: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("MainActivity2", "Error opening URL: " + e.getMessage());
+                }
+            }
+        });
+
 
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -126,6 +151,7 @@ public class MainActivity2 extends AppCompatActivity {
                             imageIv.setImageURI(imageUri);
                             resultTv.setText("Ảnh đã được chọn. Nhấn 'Scan QR' để quét.");
                             scannedContent = null; // Đặt lại nội dung quét khi chọn ảnh mới
+                            openLinkBtn.setVisibility(View.GONE); // Ẩn nút liên kết khi chọn ảnh mới
                         }
                     } else {
                         Toast.makeText(this, "Đã hủy chọn ảnh", Toast.LENGTH_SHORT).show();
@@ -149,24 +175,43 @@ public class MainActivity2 extends AppCompatActivity {
         if (barcodes.isEmpty()) {
             resultTv.setText("Không tìm thấy QR Code nào");
             scannedContent = null;
+            openLinkBtn.setVisibility(View.GONE); // Ẩn nút nếu không có QR
             Log.d("QR_SCAN", "Không tìm thấy QR Code nào");
             return;
         }
 
         StringBuilder resultBuilder = new StringBuilder();
-        for (Barcode barcode : barcodes) {
-            String rawValue = barcode.getRawValue();
-            resultBuilder.append("QR Code: ").append(rawValue).append("\n");
-            scannedContent = rawValue; // Lưu nội dung quét được
-            Log.d("QR_SCAN", "Tìm thấy QR: " + rawValue);
-        }
-        resultTv.setText(resultBuilder.toString().trim());
+        // Lấy nội dung của QR đầu tiên (thường chỉ có 1 QR trong ảnh)
+        Barcode firstBarcode = barcodes.get(0);
+        scannedContent = firstBarcode.getRawValue();
+        resultBuilder.append("QR Code: ").append(scannedContent);
 
-        // *** Tự động lưu ảnh và nội dung vào DB và bộ nhớ ngay sau khi quét thành công ***
+        resultTv.setText(resultBuilder.toString().trim());
+        Log.d("QR_SCAN", "Tìm thấy QR: " + scannedContent);
+
+        // Kiểm tra nếu nội dung quét được là một URL
+        if (isValidUrl(scannedContent)) {
+            openLinkBtn.setVisibility(View.VISIBLE); // Hiển thị nút
+        } else {
+            openLinkBtn.setVisibility(View.GONE); // Ẩn nút nếu không phải URL
+        }
+
+        // Tự động lưu ảnh và nội dung vào DB và bộ nhớ ngay sau khi quét thành công
         if (imageUri != null && scannedContent != null) {
             saveImageAndContentAndToDb();
         }
     }
+
+    // Helper method to check if a string is a valid URL
+    private boolean isValidUrl(String url) {
+        // Regex để kiểm tra URL, bao gồm http, https, ftp
+        // Đảm bảo đủ các ký tự hợp lệ cho URL
+        String urlRegex = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+        Pattern pattern = Pattern.compile(urlRegex);
+        Matcher matcher = pattern.matcher(url);
+        return matcher.matches();
+    }
+
 
     private void pickImageGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);

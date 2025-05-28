@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity3"
-    android:background="@color/black"
+    android:background="@drawable/gradient_background"
     >
 
     <FrameLayout
@@ -58,8 +58,8 @@
             android:ems="18"
             android:importantForAutofill="no"
             android:inputType="textMultiLine|textImeMultiLine"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
             android:textSize="14sp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,9 +69,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/idTILData"
         android:layout_marginStart="20dp"
+        android:background="@drawable/rounded_button"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="10dp"
-        android:text="Generate QR Code"
+        android:text="Tạo QR"
+        android:textSize="20sp"
         android:textAllCaps="false"/>
 
     <!-- Nút Lưu ảnh QR thêm mới -->
@@ -83,7 +85,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="10dp"
-        android:text="Save QR Code"
+        android:text="Lưu QR"
+        android:textSize="20sp"
+        android:background="@drawable/rounded_button"
         android:textAllCaps="false" />
 
 </RelativeLayout>

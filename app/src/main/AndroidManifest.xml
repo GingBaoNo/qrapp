@@ -22,13 +22,13 @@
         android:theme="@style/Theme.QrApp"
         tools:targetApi="31">
         <activity
+            android:name=".ScanDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".HistoryActivity"
             android:exported="false" />
         <activity
             android:name=".CameraXLivePreviewActivity"
-            android:exported="false" />
-        <activity
-            android:name=".StartActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

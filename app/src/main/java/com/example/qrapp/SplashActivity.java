@@ -18,28 +18,27 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
+
         // Ẩn thanh điều hướng và trạng thái
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN |
                         View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        Handler handler=new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                nextActivity();
-            }
-        },2000);
+        // Sử dụng Handler để chuyển đến MainActivity sau 2 giây
+        new Handler().postDelayed(this::nextActivity, 2000);
     }
 
     private void nextActivity() {
-        Intent intent=new Intent(SplashActivity.this,StartActivity.class);
+        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(intent);
+        finish(); // Kết thúc SplashActivity để không quay lại
     }
 }

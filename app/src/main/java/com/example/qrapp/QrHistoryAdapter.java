@@ -1,5 +1,6 @@
 package com.example.qrapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,12 +54,24 @@ public class QrHistoryAdapter extends RecyclerView.Adapter<QrHistoryAdapter.QrHi
             holder.qrImage.setImageResource(R.drawable.ic_launcher_background); // Đặt ảnh mặc định nếu không có đường dẫn
         }
 
-
         holder.qrContent.setText("Nội dung: " + currentScan.getScannedContent());
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
         String formattedDate = sdf.format(new java.util.Date(currentScan.getTimestamp()));
         holder.qrTimestamp.setText("Quét lúc: " + formattedDate);
+
+        // Set OnClickListener for the item
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ScanDetailActivity.class);
+                intent.putExtra(ScanDetailActivity.EXTRA_SCAN_ID, currentScan.getId());
+                intent.putExtra(ScanDetailActivity.EXTRA_IMAGE_PATH, currentScan.getImagePath());
+                intent.putExtra(ScanDetailActivity.EXTRA_SCANNED_CONTENT, currentScan.getScannedContent());
+                intent.putExtra(ScanDetailActivity.EXTRA_TIMESTAMP, currentScan.getTimestamp());
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

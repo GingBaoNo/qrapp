@@ -37,4 +37,11 @@ public class HistoryViewModel extends AndroidViewModel {
             qrCodeScanDao.deleteAllScans();
         });
     }
+
+    // New method to delete a scan by ID
+    public void deleteScanById(int scanId) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            qrCodeScanDao.deleteScanById(scanId);
+        });
+    }
 }

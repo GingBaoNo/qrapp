@@ -1,6 +1,8 @@
 package com.example.qrapp;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ public class HistoryActivity extends AppCompatActivity {
     private QrHistoryAdapter adapter;
     private HistoryViewModel historyViewModel;
     private TextView emptyView; // TextView để hiển thị khi danh sách trống
+    private ImageView img_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,14 @@ public class HistoryActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerViewHistory);
         emptyView = findViewById(R.id.emptyView); // Khởi tạo emptyView
+        img_back=findViewById(R.id.image_back);
+
+        img_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Cấu hình RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
