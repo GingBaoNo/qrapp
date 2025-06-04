@@ -254,6 +254,79 @@ public class MainActivity2 extends AppCompatActivity {
         }
     }
 
+//    private void saveImageAndContentAndToDb() {
+//        if (imageUri == null || scannedContent == null) {
+//            Toast.makeText(this, "Không có ảnh hoặc nội dung để lưu", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        try {
+//            Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+//            if (bitmap == null) {
+//                Toast.makeText(this, "Không thể tải ảnh từ Uri", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//
+//            String fileName = "QR_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".png";
+//            String savedImagePath = null; // Biến để lưu đường dẫn ảnh đã lưu
+//
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                ContentResolver resolver = getContentResolver();
+//                ContentValues contentValues = new ContentValues();
+//                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+//                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+//                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + "QRCodeScans");
+//                contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
+//
+//                Uri imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+//                Uri savedUri = resolver.insert(imageCollection, contentValues);
+//
+//                if (savedUri != null) {
+//                    try (OutputStream fos = resolver.openOutputStream(savedUri)) {
+//                        if (fos != null) {
+//                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//                            savedImagePath = savedUri.toString(); // Lưu URI của ảnh đã lưu
+//                        }
+//                    }
+//                    contentValues.clear();
+//                    contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0);
+//                    resolver.update(savedUri, contentValues, null, null);
+//                }
+//            } else {
+//                File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "QRCodeScans");
+//                if (!storageDir.exists()) {
+//                    storageDir.mkdirs();
+//                }
+//                File imageFile = new File(storageDir, fileName);
+//
+//                try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//                    savedImagePath = Uri.fromFile(imageFile).toString(); // Lưu đường dẫn file dưới dạng URI String
+//                    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//                    mediaScanIntent.setData(Uri.fromFile(imageFile));
+//                    sendBroadcast(mediaScanIntent);
+//                }
+//            }
+//
+//            if (savedImagePath != null) {
+//                // Lưu vào Room Database
+//                QRCodeScan scan = new QRCodeScan(savedImagePath, scannedContent, System.currentTimeMillis());
+//                AppDatabase.databaseWriteExecutor.execute(() -> {
+//                    qrCodeScanDao.insert(scan);
+//                    runOnUiThread(() -> Toast.makeText(MainActivity2.this, "QR Code đã được lưu vào lịch sử!", Toast.LENGTH_SHORT).show());
+//                });
+//
+//                Log.d("QR_SAVE", "Ảnh và nội dung đã lưu: " + fileName + ", Nội dung: " + scannedContent + ", Đường dẫn: " + savedImagePath);
+//            } else {
+//                Toast.makeText(this, "Lỗi khi lưu ảnh.", Toast.LENGTH_SHORT).show();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Toast.makeText(this, "Lỗi khi lưu ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
     private void saveImageAndContentAndToDb() {
         if (imageUri == null || scannedContent == null) {
             Toast.makeText(this, "Không có ảnh hoặc nội dung để lưu", Toast.LENGTH_SHORT).show();
@@ -261,51 +334,27 @@ public class MainActivity2 extends AppCompatActivity {
         }
 
         try {
+            // Bước 1: Tải Bitmap từ Uri đã chọn
             Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
             if (bitmap == null) {
-                Toast.makeText(this, "Không thể tải ảnh từ Uri", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Không thể tải ảnh từ Uri đã chọn", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String fileName = "QR_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".png";
+            // Bước 2: Tạo tên file duy nhất
+            String fileName = "QR_Internal_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".png";
             String savedImagePath = null; // Biến để lưu đường dẫn ảnh đã lưu
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ContentResolver resolver = getContentResolver();
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + "QRCodeScans");
-                contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
+            // Lấy thư mục lưu trữ nội bộ của ứng dụng
+            File internalStorageDir = getFilesDir(); // Đây là thư mục /data/data/com.example.qrapp/files
 
-                Uri imageCollection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                Uri savedUri = resolver.insert(imageCollection, contentValues);
+            // Tạo đối tượng File cho ảnh trong thư mục nội bộ
+            File imageFile = new File(internalStorageDir, fileName);
 
-                if (savedUri != null) {
-                    try (OutputStream fos = resolver.openOutputStream(savedUri)) {
-                        if (fos != null) {
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                            savedImagePath = savedUri.toString(); // Lưu URI của ảnh đã lưu
-                        }
-                    }
-                    contentValues.clear();
-                    contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0);
-                    resolver.update(savedUri, contentValues, null, null);
-                }
-            } else {
-                File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "QRCodeScans");
-                if (!storageDir.exists()) {
-                    storageDir.mkdirs();
-                }
-                File imageFile = new File(storageDir, fileName);
-
-                try (FileOutputStream fos = new FileOutputStream(imageFile)) {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    savedImagePath = Uri.fromFile(imageFile).toString(); // Lưu đường dẫn file dưới dạng URI String
-                    Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                    mediaScanIntent.setData(Uri.fromFile(imageFile));
-                    sendBroadcast(mediaScanIntent);
-                }
+            // Ghi Bitmap vào file bằng FileOutputStream
+            try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos); // Nén ảnh với chất lượng 100%
+                savedImagePath = imageFile.getAbsolutePath(); // Lấy đường dẫn tuyệt đối của file đã lưu
             }
 
             if (savedImagePath != null) {
@@ -313,17 +362,24 @@ public class MainActivity2 extends AppCompatActivity {
                 QRCodeScan scan = new QRCodeScan(savedImagePath, scannedContent, System.currentTimeMillis());
                 AppDatabase.databaseWriteExecutor.execute(() -> {
                     qrCodeScanDao.insert(scan);
-                    runOnUiThread(() -> Toast.makeText(MainActivity2.this, "QR Code đã được lưu vào lịch sử!", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() ->
+                            // Thay đổi thông báo Toast để làm rõ ảnh được lưu nội bộ
+                            Toast.makeText(MainActivity2.this, "QR Code đã được lưu vào lịch sử nội bộ!", Toast.LENGTH_SHORT).show()
+                    );
                 });
 
-                Log.d("QR_SAVE", "Ảnh và nội dung đã lưu: " + fileName + ", Nội dung: " + scannedContent + ", Đường dẫn: " + savedImagePath);
+                // Thay đổi thông báo Log để làm rõ ảnh được lưu nội bộ
+                Log.d("QR_SAVE", "Ảnh và nội dung đã lưu vào lịch sử nội bộ: " + fileName + ", Nội dung: " + scannedContent + ", Đường dẫn: " + savedImagePath);
             } else {
-                Toast.makeText(this, "Lỗi khi lưu ảnh.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Lỗi khi lưu ảnh vào bộ nhớ nội bộ.", Toast.LENGTH_SHORT).show();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Lỗi khi lưu ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Lỗi I/O khi lưu ảnh nội bộ: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi không xác định khi lưu ảnh nội bộ: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

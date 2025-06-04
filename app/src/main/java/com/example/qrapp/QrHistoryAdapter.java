@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.qrapp.Entity.QRCodeScan;
 
+import java.io.File; // Import File để làm việc với đường dẫn ảnh nội bộ
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +29,7 @@ public class QrHistoryAdapter extends RecyclerView.Adapter<QrHistoryAdapter.QrHi
 
     public void setScanList(List<QRCodeScan> newScanList) {
         this.scanList = newScanList;
-        notifyDataSetChanged(); // Cập nhật RecyclerView khi dữ liệu thay đổi
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -42,10 +43,12 @@ public class QrHistoryAdapter extends RecyclerView.Adapter<QrHistoryAdapter.QrHi
     public void onBindViewHolder(@NonNull QrHistoryViewHolder holder, int position) {
         QRCodeScan currentScan = scanList.get(position);
 
-        // Tải ảnh sử dụng Glide
-        if (currentScan.getImagePath() != null && !currentScan.getImagePath().isEmpty()) {
+        String imagePath = currentScan.getImagePath();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            // Tạo Uri từ đường dẫn file nội bộ
+            Uri imageUri = Uri.fromFile(new File(imagePath));
             Glide.with(holder.itemView.getContext())
-                    .load(Uri.parse(currentScan.getImagePath()))
+                    .load(imageUri)
                     .centerCrop()
                     .placeholder(R.drawable.ic_launcher_background) // Ảnh placeholder khi đang tải
                     .error(R.drawable.ic_launcher_foreground) // Ảnh lỗi nếu tải thất bại
@@ -60,17 +63,13 @@ public class QrHistoryAdapter extends RecyclerView.Adapter<QrHistoryAdapter.QrHi
         String formattedDate = sdf.format(new java.util.Date(currentScan.getTimestamp()));
         holder.qrTimestamp.setText("Quét lúc: " + formattedDate);
 
-        // Set OnClickListener for the item
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ScanDetailActivity.class);
-                intent.putExtra(ScanDetailActivity.EXTRA_SCAN_ID, currentScan.getId());
-                intent.putExtra(ScanDetailActivity.EXTRA_IMAGE_PATH, currentScan.getImagePath());
-                intent.putExtra(ScanDetailActivity.EXTRA_SCANNED_CONTENT, currentScan.getScannedContent());
-                intent.putExtra(ScanDetailActivity.EXTRA_TIMESTAMP, currentScan.getTimestamp());
-                v.getContext().startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ScanDetailActivity.class);
+            intent.putExtra(ScanDetailActivity.EXTRA_SCAN_ID, currentScan.getId());
+            intent.putExtra(ScanDetailActivity.EXTRA_IMAGE_PATH, currentScan.getImagePath());
+            intent.putExtra(ScanDetailActivity.EXTRA_SCANNED_CONTENT, currentScan.getScannedContent());
+            intent.putExtra(ScanDetailActivity.EXTRA_TIMESTAMP, currentScan.getTimestamp());
+            v.getContext().startActivity(intent);
         });
     }
 
