@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.graphics.Color;
 
 import com.google.android.material.textfield.TextInputEditText;
 import androidmads.library.qrgenearator.QRGContents;
@@ -80,8 +81,12 @@ public class MainActivity3 extends AppCompatActivity {
                 int height = point.y;
                 int dimen = (width < height ? width : height) * 3 / 4;
 
+
                 // Tạo QR code
                 qrgEncoder = new QRGEncoder(data, null, QRGContents.Type.TEXT, dimen);
+                qrgEncoder.setColorBlack(Color.WHITE);
+                qrgEncoder.setColorWhite(Color.BLACK);
+
                 bitmap = qrgEncoder.getBitmap();
 
                 qrCodeTV.setVisibility(View.GONE);
